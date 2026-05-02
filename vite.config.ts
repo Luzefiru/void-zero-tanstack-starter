@@ -29,8 +29,8 @@ export default defineConfig({
   plugins: [
     devtools(),
     tailwindcss(),
+    ...(!isTest ? [voidPlugin()] : []),
     tanstackStart(),
     viteReact(),
-    ...(!isTest ? [voidPlugin()] : []),
   ],
 });

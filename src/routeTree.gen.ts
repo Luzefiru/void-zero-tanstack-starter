@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from "./routes/__root";
 import { Route as AboutRouteImport } from "./routes/about";
 import { Route as IndexRouteImport } from "./routes/index";
+import { Route as Char91__voidChar93PrerenderPathsRouteImport } from "./routes/[__void].prerender-paths";
 
 const AboutRoute = AboutRouteImport.update({
   id: "/about",
@@ -22,31 +23,40 @@ const IndexRoute = IndexRouteImport.update({
   path: "/",
   getParentRoute: () => rootRouteImport,
 } as any);
+const Char91__voidChar93PrerenderPathsRoute = Char91__voidChar93PrerenderPathsRouteImport.update({
+  id: "/__void/prerender-paths",
+  path: "/__void/prerender-paths",
+  getParentRoute: () => rootRouteImport,
+} as any);
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute;
   "/about": typeof AboutRoute;
+  "/__void/prerender-paths": typeof Char91__voidChar93PrerenderPathsRoute;
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute;
   "/about": typeof AboutRoute;
+  "/__void/prerender-paths": typeof Char91__voidChar93PrerenderPathsRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   "/": typeof IndexRoute;
   "/about": typeof AboutRoute;
+  "/__void/prerender-paths": typeof Char91__voidChar93PrerenderPathsRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/about";
+  fullPaths: "/" | "/about" | "/__void/prerender-paths";
   fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/about";
-  id: "__root__" | "/" | "/about";
+  to: "/" | "/about" | "/__void/prerender-paths";
+  id: "__root__" | "/" | "/about" | "/__void/prerender-paths";
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   AboutRoute: typeof AboutRoute;
+  Char91__voidChar93PrerenderPathsRoute: typeof Char91__voidChar93PrerenderPathsRoute;
 }
 
 declare module "@tanstack/react-router" {
@@ -65,12 +75,20 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof IndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    "/__void/prerender-paths": {
+      id: "/__void/prerender-paths";
+      path: "/__void/prerender-paths";
+      fullPath: "/__void/prerender-paths";
+      preLoaderRoute: typeof Char91__voidChar93PrerenderPathsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  Char91__voidChar93PrerenderPathsRoute: Char91__voidChar93PrerenderPathsRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
