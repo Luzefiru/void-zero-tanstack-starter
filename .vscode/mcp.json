@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "void": {
+      "command": "npx",
+      "args": ["void", "mcp"],
+      "type": "stdio"
+    }
+  }
+}

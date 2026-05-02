@@ -14,3 +14,4 @@ todos.json
 
 # for void-sdk/void
 .void
+*.tsbuildinfo

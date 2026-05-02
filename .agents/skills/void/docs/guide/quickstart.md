@@ -1,0 +1,285 @@
+---
+outline: deep
+---
+
+# Quickstart
+
+## Start in an Empty Directory
+
+Void is currently in private preview. Keep imports in your app on `void` and `@void/*`. In the preview, only the installed package identities change.
+
+1. Add the GitHub Packages registry mapping to your project's `.npmrc`:
+
+```sh
+echo "@void-sdk:registry=https://npm.pkg.github.com" >> .npmrc
+```
+
+2. Create a GitHub classic PAT with `read:packages`:
+
+- Visit https://github.com/settings/tokens/new
+- Enable `read:packages`
+- Click "Generate Token"
+
+See also [token creation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) and [packages permissions](https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages) for details.
+
+3. Add the token to your user `~/.npmrc` so it stays out of source control:
+
+```sh
+echo "//npm.pkg.github.com/:_authToken=YOUR_GITHUB_PAT" >> ~/.npmrc
+```
+
+4. For CI, configure `NODE_AUTH_TOKEN` with your PAT under GitHub repo settings "Secrets and variables" > "Actions":
+
+```yaml
+- uses: actions/setup-node@v4
+  with:
+    node-version: lts/*
+    cache: pnpm
+    registry-url: https://npm.pkg.github.com
+    scope: "@void-sdk"
+- run: pnpm install
+  env:
+    NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+```
+
+5. Install the Void CLI from GitHub Packages using a package alias:
+
+`npm`
+
+```sh
+npm install -D void@npm:@void-sdk/void --legacy-peer-deps
+```
+
+`pnpm`
+
+```sh
+pnpm add -D void@npm:@void-sdk/void
+```
+
+`yarn`
+
+```sh
+yarn add -D void@npm:@void-sdk/void
+```
+
+`bun`
+
+```sh
+bun add -D void@npm:@void-sdk/void
+```
+
+::: warning npm package aliases
+npm has a known issue resolving peer dependencies with package aliases. Use `--legacy-peer-deps` for npm installs during the private preview.
+:::
+
+Your `package.json` will then contain an alias like:
+
+```json
+{
+  "devDependencies": {
+    "void": "npm:@void-sdk/void@VERSION"
+  }
+}
+```
+
+In an empty directory, `void init` adds the matching Pages adapter and starter dependencies after you choose a framework. Use the same alias pattern for `@void/react`, `@void/vue`, `@void/svelte`, `@void/solid`, and `@void/md` when you add them manually later.
+
+As part of `void init`, you'll choose a Pages framework (React, Vue, Svelte, or Solid) and a starter type. D1 is the default top option and scaffolds a DB-backed page loader, schema, generated migration, `db/seed.ts`, and API route. PostgreSQL scaffolds the same starter and writes `"database": "pg"` to `void.json`. Static Pages skips the database and server starter files so you can start with static content and add Void features later.
+
+After installation, run the setup flow:
+
+::: code-group
+
+```sh [npm]
+npx void init
+```
+
+```sh [pnpm]
+pnpm void init
+```
+
+```sh [yarn]
+yarn void init
+```
+
+```sh [bun]
+bunx void init
+```
+
+:::
+
+At the end of the full interactive flow, `void init` can also handle Void project setup by logging you in and linking or creating your Void project. That means the default first-time path is install packages, run `void init`, then `void deploy`.
+
+For the database-backed starters, D1 is the zero-config default for prototyping and read-heavy apps, while PostgreSQL is better when you already have Postgres infrastructure or need heavier writes and more complex queries.
+
+<details>
+<summary style="cursor:pointer">
+💡 <b>Notes on <code>void</code> binary usage</b>
+</summary>
+
+`void` is a local binary from the installed `void` package, so outside of npm scripts, you will have to invoke it with `npx`, `pnpm`, `yarn`, or `bunx`. For brevity, you will sometimes see unprefixed `void` usage throughout the docs. Just remember it needs to be invoked through a binary runner.
+
+Alternatively, you can add `./node_modules/.bin` to your `PATH` so that you can invoke `void` directly when you are in the root directory of your app.
+
+:::warning ⚠️ Prefer local install
+We do not recommend installing `void` globally, because the CLI needs to be in sync with same version of the runtime framework. Always install `void` locally as a dev dependency of your project.
+:::
+
+</details>
+
+## Using with Coding Agents
+
+`void init` detects your agent once and reuses that choice for instructions, skills linking, and MCP config.
+
+If auto-detection fails, `void init` asks you to choose from a short list (Claude, Cursor, Codex, Gemini CLI, Generic).
+
+In supported agents such as Claude Code, you can invoke the `/void` skill to turn your agent into a Void export. Then, simply ask the agent to build an app with Void. See the [Coding Agents](../integrations/agents) guide for more details.
+
+## Meta Frameworks
+
+Void as a platform supports Vite-based meta frameworks, but the Void SDK itself is also a powerful and flexible meta framework via its [Pages routing](./pages-routing/overview) feature. If you only want to use an existing meta framework and deploy to Void, check out the [Framework Integration Guides](../integrations/frameworks/overview).
+
+## Adding to an Existing Vite App
+
+Void is currently in private preview, so use the alias install shown above instead of the plain `void` package name.
+
+::: code-group
+
+```sh [npm]
+npm install -D void@npm:@void-sdk/void --legacy-peer-deps
+```
+
+```sh [pnpm]
+pnpm add -D void@npm:@void-sdk/void
+```
+
+```sh [yarn]
+yarn add -D void@npm:@void-sdk/void
+```
+
+```sh [bun]
+bun add -D void@npm:@void-sdk/void
+```
+
+:::
+
+Enable the plugin in `vite.config.ts`
+
+```ts
+import { defineConfig } from "vite";
+import { voidPlugin } from "void";
+
+export default defineConfig({
+  plugins: [voidPlugin()],
+});
+```
+
+Then run the setup guide via `void` (Void CLI):
+
+::: code-group
+
+```sh [npm]
+npx void init
+```
+
+```sh [pnpm]
+pnpm void init
+```
+
+```sh [yarn]
+yarn void init
+```
+
+```sh [bun]
+bunx void init
+```
+
+:::
+
+## Once You Have a Working App
+
+### 1. Edit the generated API route
+
+Your starter already includes `routes/api/hello.ts` with a named `GET` export:
+
+```ts
+import { defineHandler } from "void";
+
+export const GET = defineHandler(() => {
+  return { message: "Hello from Void" };
+});
+```
+
+### 2. Run locally
+
+```sh
+npm run dev
+```
+
+Then visit:
+
+- App: `http://localhost:5173`
+- API route: `http://localhost:5173/api/hello`
+
+### 3. Finish Void project setup if you skipped it during `void init`
+
+```sh
+void auth login
+```
+
+If you already logged in and linked a project during `void init`, you can skip this step.
+
+### 4. Deploy
+
+Set secrets once before deploying, if any:
+
+```sh
+void secret put KEY=value
+```
+
+Then run:
+
+```sh
+void deploy
+```
+
+```sh
+┌  void deploy
+│
+◇  Building...
+│  (vite build output)
+│
+ℹ  Found N migration(s)
+│
+◇  Checking assets...
+◇  Uploading X/Y assets (Z cached)
+◇  Packaging...
+◇  Deploying...
+◇  Deployed!
+│
+│  ╭─────────────────────────────────────────╮
+│  │  https://my-app.void.app           │
+│  │                                         │
+│  │  2 worker module(s), 5 static asset(s)  │
+│  │  1 migration(s) applied                 │
+│  │  SSR enabled                            │
+│  ╰─────────────────────────────────────────╯
+│
+└  Done!
+```
+
+On first deploy, Void will:
+
+- build your app
+- create or link a project if you did not already do that during `void init`
+- provision required resources (for example D1/KV/R2 when inferred)
+- deploy to `https://<slug>.void.app`
+
+Right now, only deploys via the CLI is supported. To setup push-to-deploy GitHub, run `void init --github`.
+
+## Next steps
+
+- To understand what kind of apps are supported: [Supported App Types](./app-types)
+- [Server Routing](./server-routing): dynamic params, middleware, and validation
+- [Database](./database): queries, migrations, and generated types
+- [Type Safety](./type-safety): end-to-end typed fetch client
