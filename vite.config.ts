@@ -1,8 +1,8 @@
 import { defineConfig } from "vite-plus";
 import { devtools } from "@tanstack/devtools-vite";
+import { voidPlugin } from "void";
 
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import { cloudflare } from "@cloudflare/vite-plugin";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import rsc from "@vitejs/plugin-rsc";
@@ -17,12 +17,6 @@ const config = defineConfig({
   plugins: [
     devtools(),
     tailwindcss(),
-    cloudflare({
-      viteEnvironment: {
-        name: "ssr",
-        childEnvironments: ["rsc"],
-      },
-    }),
     tanstackStart({
       rsc: {
         enabled: true,
@@ -30,6 +24,7 @@ const config = defineConfig({
     }),
     rsc(),
     viteReact(),
+    voidPlugin(),
   ],
 });
 

@@ -1,5 +1,5 @@
 {
-  "name": "void-zero",
+  "name": "void-zero-playground",
   "private": true,
   "type": "module",
   "imports": {
@@ -27,7 +27,6 @@
     "tailwindcss": "^4.2.4"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.35.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",
@@ -37,11 +36,13 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "@vitejs/plugin-rsc": "^0.5.25",
+    "@void/react": "npm:@void-sdk/react@^0.6.1",
     "jsdom": "^29.1.1",
     "typescript": "^6.0.3",
     "vite": "^8.0.10",
     "vite-plus": "^0.1.20",
     "vitest": "^4.1.5",
+    "void": "npm:@void-sdk/void@^0.6.1",
     "wrangler": "^4.87.0"
   },
   "packageManager": "pnpm@10.33.2",
